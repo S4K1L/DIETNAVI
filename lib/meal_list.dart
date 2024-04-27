@@ -55,7 +55,7 @@ class _MealsSectionFoodState extends State<MealsSectionFood> {
 
   Future<void> _fetchMeals() async {
     final response = await http
-        .get(Uri.parse('https://www.themealdb.com/api/json/v1/1/search.php?s'));
+        .get(Uri.parse('https://www.themealdb.com/api/json/v1/1/filter.php?a=Malaysian'));
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       List<dynamic> fetchedMeals = data['meals'];
@@ -105,22 +105,10 @@ class _MealsSectionFoodState extends State<MealsSectionFood> {
               itemCount: _getFilteredMeals(selectedMealTime).length,
               itemBuilder: (context, index) {
                 final filteredMeal = _getFilteredMeals(selectedMealTime)[index];
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Meal_Food_DetailsPage(
-                          meal: filteredMeal,
-                        ),
-                      ),
-                    );
-                  },
-                  child: Meal_Food_Card(
-                    meal: filteredMeal,
-                    calories: Random().nextInt(600) + 200,
-                    userCalorieNeeds: userDailyCalorieNeeds,
-                  ),
+                return Meal_Food_Card(
+                  meal: filteredMeal,
+                  calories: Random().nextInt(600) + 200,
+                  userCalorieNeeds: userDailyCalorieNeeds,
                 );
               },
             ),
