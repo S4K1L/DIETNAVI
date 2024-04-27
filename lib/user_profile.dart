@@ -192,7 +192,7 @@ class _ProfileViewState extends State<ProfileView> {
           ),
           const SizedBox(height: 10),
           Text(
-            "BMI: ${bmi}",
+            "BMI: ${bmi.toStringAsFixed(2)}",
             style: const TextStyle(fontSize: 16, color: Colors.white),
             textAlign: TextAlign.center,
           ),
