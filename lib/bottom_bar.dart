@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:food/user_profile.dart';
 import 'calorie-calculator.dart';
+import 'excercise_screen.dart';
 import 'home.dart';
 import 'meal_list.dart';
 
@@ -13,7 +14,7 @@ class Bottom extends StatefulWidget {
 
 class _BottomBarState extends State<Bottom> {
   int index_color = 0;
-  List Screen = [NutritionApp(),MealsSectionFood(),WorkoutSection(),ProfileView()];
+  List Screen = [NutritionApp(),MealsSectionFood(),ProfileView(),ExercisePage()];
 
   @override
   Widget build(BuildContext context) {
@@ -64,26 +65,26 @@ class _BottomBarState extends State<Bottom> {
                 GestureDetector(
                   onTap: () {
                     setState(() {
-                      index_color = 2;
+                      index_color = 3;
                     });
                   },
                   child: Icon(
                     Icons.workspace_premium,
                     size: 30,
-                    color: index_color == 2 ? Colors.blue : Colors.grey,
+                    color: index_color == 3 ? Colors.blue : Colors.grey,
                   ),
                 ),
                 const SizedBox(width: 20),
                 GestureDetector(
                   onTap: () {
                     setState(() {
-                      index_color = 3;
+                      index_color = 2;
                     });
                   },
                   child: Icon(
                     Icons.person_outline,
                     size: 30,
-                    color: index_color == 3 ? Colors.blue : Colors.grey,
+                    color: index_color == 2 ? Colors.blue : Colors.grey,
                   ),
                 ),
 

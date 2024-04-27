@@ -25,7 +25,7 @@ class _CalorieCalculatorPageState extends State<CalorieCalculatorPage> {
     "Super active (very hard exercise/sports & physical job)": 1.9,
   };
 
-  Future<void> _saveCalorieData(double calories, String goal, String excludedFoods, String breakfast, String lunch, String dinner) async {
+  Future<void> _saveCalorieData(double calories, String goal, String excludedFoods, double bmi) async {
     User? currentUser =
         FirebaseAuth.instance.currentUser; // Get the current user
     if (currentUser != null) {
@@ -43,10 +43,8 @@ class _CalorieCalculatorPageState extends State<CalorieCalculatorPage> {
         'weight': weight, // Save the weight
         'height': height,
         'goal': goal,
-        'breakfast': breakfast,
-        'lunch': lunch,
-        'dinner': dinner,
         'excludedFoods': excludedFoods,
+        'bmi': bmi,
         'activityLevel':
             selectedActivityLevel, // Save the selected activity level
         'timestamp': FieldValue
@@ -155,18 +153,15 @@ class _CalorieCalculatorPageState extends State<CalorieCalculatorPage> {
       double bmr =
           (10 * weight!) + (6.25 * height!) - (5 * age!) + 5; // BMR for men
 
-      double bmi = (weight! / ((height! / 100) * (height! / 100)));
+      //double bmi = (weight! / ((height! / 100) * (height! / 100)));
+      double bmi = weight! / ((height! / 100) * (height! / 100));
 
       double calories = bmr * activityLevelFactor;
 
       String goal = showWeightGoal(context, bmi);
       String excludedFoods = showExcludedFoods(context, bmi);
 
-      String breakfast = breakfastMenu(context, calories);
-      String lunch = lunchMenu(context, calories);
-      String dinner = dinnerMenu(context, calories);
-
-      _saveCalorieData(calories, goal, excludedFoods, breakfast, lunch, dinner);
+      _saveCalorieData(calories, goal, excludedFoods, bmi);
       // Show the result
       showDialog(
         context: context,
@@ -188,20 +183,26 @@ class _CalorieCalculatorPageState extends State<CalorieCalculatorPage> {
   }
 
   String showWeightGoal(BuildContext context, double bmi) {
-
     String goal;
 
     // Determine goal based on BMI ranges
     if (bmi < 18.5) {
-      return goal = "Gain weight (underweight)";
+      goal = "Gain weight (underweight)";
     } else if (bmi >= 18.5 && bmi < 24.9) {
-      return goal = "Maintain weight (normal weight)";
+      goal = "Maintain weight (normal weight)";
     } else if (bmi >= 24.9 && bmi < 29.9) {
-      return goal = "Lose weight (overweight)";
+      goal = "Lose weight (overweight)";
+    } else if (bmi >= 29.9 && bmi < 34.9) {
+      goal = "Lose weight (obese class I) - Aim to lose 5-10% of current body weight";
+    } else if (bmi >= 34.9 && bmi < 39.9) {
+      goal = "Lose weight (obese class II) - Aim to lose 10-20% of current body weight";
     } else {
-      return goal = "Lose weight (obese)";
+      goal = "Lose weight (obese class III) - Aim to lose 20% or more of current body weight";
     }
+
+    return goal;
   }
+
   String showExcludedFoods(BuildContext context, double bmi) {
     String excludedFoods;
 
@@ -217,50 +218,4 @@ class _CalorieCalculatorPageState extends State<CalorieCalculatorPage> {
     }
   }
 
-
-  String breakfastMenu(BuildContext context, double calorieNeeds) {
-    String breakfast;
-
-    // Customize menu suggestions based on calorie allocation
-    if (calorieNeeds < 1500) {
-      // Low calorie needs
-      return breakfast = "Oatmeal with fruits, Greek yogurt with berries";
-    } else if (calorieNeeds >= 1500 && calorieNeeds < 2000) {
-      // Moderate calorie needs
-      return breakfast = "Whole grain toast with avocado, Smoothie with spinach and banana";
-    } else {
-      // High calorie needs
-      return breakfast = "Egg omelette with vegetables, Whole grain pancakes with maple syrup";
-
-    }
-
-  }
-  String lunchMenu(BuildContext context, double calorieNeeds) {
-    String lunch;
-
-
-    // Customize menu suggestions based on calorie allocation
-    if (calorieNeeds < 1500) {
-      // Low calorie needs
-      return lunch = "Grilled chicken salad, Vegetable soup";
-    } else if (calorieNeeds >= 1500 && calorieNeeds < 2000) {
-      // Moderate calorie needs
-      return lunch = "Turkey sandwich with whole grain bread, Vegetable stir-fry with tofu";
-    } else {
-      // High calorie needs
-      return lunch = "Grilled salmon with sweet potato and broccoli, Chicken avocado wrap";
-    }
-  }
-  String dinnerMenu(BuildContext context, double calorieNeeds) {
-    String dinner;
-
-    // Customize menu suggestions based on calorie allocation
-    if (calorieNeeds < 1500) {
-      return dinner = "Baked salmon with steamed vegetables, Quinoa stir-fry";
-    } else if (calorieNeeds >= 1500 && calorieNeeds < 2000) {
-      return dinner = "Grilled shrimp with quinoa and roasted vegetables, Vegetable curry with brown rice";
-    } else {
-      return dinner = "Beef stir-fry with noodles, Mediterranean-style grilled vegetables with couscous";
-    }
-  }
 }

@@ -19,10 +19,8 @@ class _ProfileViewState extends State<ProfileView> {
   String activity = '';
   String goal = '';
   String excludedFoods = '';
-  String breakfast = '';
-  String lunch = '';
-  String dinner = '';
   String calorieData = 'Loading calorie data...';
+  double bmi = 0.0;
 
   @override
   void initState() {
@@ -49,9 +47,7 @@ class _ProfileViewState extends State<ProfileView> {
           weight = 'Weight: ${snapshot['weight'] ?? 'N/A'} kg';
           height = 'Height: ${snapshot['height'] ?? 'N/A'} cm';
           goal = 'Goal: ${snapshot['goal'] ?? 'N/A'}';
-          breakfast = 'Breakfast: ${snapshot['breakfast'] ?? 'N/A'}';
-          lunch = 'Lunch: ${snapshot['lunch'] ?? 'N/A'}';
-          dinner = 'Dinner: ${snapshot['dinner'] ?? 'N/A'}';
+          bmi = snapshot['bmi'];
           excludedFoods = 'Avoid: ${snapshot['excludedFoods'] ?? 'N/A'}';
           activity = 'Activity Level: ${snapshot['activityLevel'] ?? 'N/A'}';
         });
@@ -67,8 +63,6 @@ class _ProfileViewState extends State<ProfileView> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,7 +75,7 @@ class _ProfileViewState extends State<ProfileView> {
               Stack(
                 alignment: Alignment.center,
                 children: [
-                  const SizedBox(width: 400, height: 450),
+                  const SizedBox(width: 400),
                   user_data(),
                   const Positioned(
                       top: 0,
@@ -162,66 +156,107 @@ class _ProfileViewState extends State<ProfileView> {
   }
 
   Container user_data() {
-    return Container(
-                  height: 550,
-                  width: 350,
-                  decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(25)),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 100),
-                      Text(
-                        'Email: $userEmail',
-                        style: const TextStyle(fontSize: 20, color: Colors.white),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        calorieData,
-                        style: const TextStyle(fontSize: 16, color: Colors.white),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        age,
-                        style: const TextStyle(fontSize: 16, color: Colors.white),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        weight,
-                        style: const TextStyle(fontSize: 16, color: Colors.white),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        height,
-                        style: const TextStyle(fontSize: 16, color: Colors.white),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        goal,
-                        style: const TextStyle(fontSize: 16, color: Colors.white),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        activity,
-                        style: const TextStyle(fontSize: 16, color: Colors.white),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        excludedFoods,
-                        style: const TextStyle(fontSize: 16, color: Colors.white),
-                        textAlign: TextAlign.center,
-                      ),
+    List<String> goalOptions = [
+      'Maintain weight',
+      'Lose weight',
+      'Gain weight',
+      'Run a marathon',
+      'Complete a triathlon',
+      'Learn a new sport',
+      'Master a new skill',
+      'Travel to new places',
+    ];
+    String selectedGoal = goalOptions.isNotEmpty ? goalOptions.first : '';
 
-                    ],
-                  ),
-                );
+    return Container(
+      height: 600,
+      width: 350,
+      decoration: BoxDecoration(
+        color: Colors.blue,
+        borderRadius: BorderRadius.circular(25),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(height: 100),
+          Text(
+            'Email: $userEmail',
+            style: const TextStyle(fontSize: 20, color: Colors.white),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            calorieData,
+            style: const TextStyle(fontSize: 16, color: Colors.white),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 10),
+          Text(
+            "BMI: ${bmi}",
+            style: const TextStyle(fontSize: 16, color: Colors.white),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 10),
+          Text(
+            age,
+            style: const TextStyle(fontSize: 16, color: Colors.white),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 10),
+          Text(
+            weight,
+            style: const TextStyle(fontSize: 16, color: Colors.white),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 10),
+          Text(
+            height,
+            style: const TextStyle(fontSize: 16, color: Colors.white),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 10),
+          Text(
+            activity,
+            style: const TextStyle(fontSize: 16, color: Colors.white),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 10),
+          Text(
+            excludedFoods,
+            style: const TextStyle(fontSize: 16, color: Colors.white),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 10),
+          DropdownButtonFormField<String>(
+            dropdownColor: Colors.blue,
+            value: selectedGoal,
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.blue,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+            ),
+            onChanged: (newValue) {
+              setState(() {
+                selectedGoal = newValue!;
+              });
+            },
+            items: goalOptions.map((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(
+                  "Goal: $value",
+                  style: TextStyle(color: Colors.white),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
   }
+
+
+
 }

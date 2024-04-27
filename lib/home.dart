@@ -11,24 +11,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:intl/intl.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Nutrition Tracker',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: NutritionApp(),
-    );
-  }
-}
-
 class NutritionApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

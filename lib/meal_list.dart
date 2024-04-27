@@ -54,9 +54,8 @@ class _MealsSectionFoodState extends State<MealsSectionFood> {
   }
 
   Future<void> _fetchMeals() async {
-    // Example fetching process
     final response = await http
-        .get(Uri.parse('https://www.themealdb.com/api/json/v1/1/search.php?s='));
+        .get(Uri.parse('https://www.themealdb.com/api/json/v1/1/search.php?s'));
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       List<dynamic> fetchedMeals = data['meals'];
@@ -90,6 +89,15 @@ class _MealsSectionFoodState extends State<MealsSectionFood> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Meal Menu",style: TextStyle(
+          color: Colors.white,
+          fontSize: 24,
+        ),),
+        backgroundColor: Colors.blue,
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+      ),
       body: Column(
         children: [
           Expanded(
@@ -112,11 +120,6 @@ class _MealsSectionFoodState extends State<MealsSectionFood> {
                     meal: filteredMeal,
                     calories: Random().nextInt(600) + 200,
                     userCalorieNeeds: userDailyCalorieNeeds,
-                    category: filteredMeal['strMeal'].contains('breakfast')
-                        ? 'Breakfast'
-                        : filteredMeal['strMeal'].contains('lunch')
-                        ? 'Lunch'
-                        : 'Dinner',
                   ),
                 );
               },
@@ -138,15 +141,27 @@ class _MealsSectionFoodState extends State<MealsSectionFood> {
 }
 
 class Meal_Food_DetailsPage extends StatelessWidget {
-  final dynamic meal;
+  final Map<String, dynamic> meal;
 
-  const Meal_Food_DetailsPage({super.key, required this.meal});
+  const Meal_Food_DetailsPage({Key? key, required this.meal}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    if (meal == null || meal.isEmpty) {
+      // Return a message or handle null meal scenario gracefully
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Error'),
+        ),
+        body: Center(
+          child: Text('Meal details not available.'),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(meal['strMeal']),
+        title: Text(meal['strMeal'] ?? 'Meal Details'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -156,17 +171,19 @@ class Meal_Food_DetailsPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  meal['strMeal'],
+                  meal['strMeal'] ?? 'Meal Name Not Available',
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 16),
-                Image.network(
+                meal['strMealThumb'] != null
+                    ? Image.network(
                   meal['strMealThumb'],
                   fit: BoxFit.cover,
-                ),
+                )
+                    : Container(), // You can replace Container() with a placeholder image or handle this case differently
                 const SizedBox(height: 16),
                 const Text(
                   'Instructions:',
@@ -174,7 +191,7 @@ class Meal_Food_DetailsPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  meal['strInstructions'],
+                  meal['strInstructions'] ?? 'Instructions not available',
                   style: const TextStyle(fontSize: 16),
                 ),
               ],
@@ -190,14 +207,11 @@ class Meal_Food_Card extends StatefulWidget {
   final dynamic meal;
   final int calories;
   final int userCalorieNeeds; // Add this
-  final String category;
-
   const Meal_Food_Card({
     super.key,
     required this.meal,
     required this.calories,
     required this.userCalorieNeeds,
-    required this.category,
   });
 
   @override
@@ -205,6 +219,12 @@ class Meal_Food_Card extends StatefulWidget {
 }
 
 class _Meal_Food_CardState extends State<Meal_Food_Card> {
+
+  String _getRandomMealTime() {
+    List<String> mealTimes = ['Breakfast', 'Lunch', 'Dinner'];
+    return mealTimes[Random().nextInt(mealTimes.length)];
+  }
+
   @override
   Widget build(BuildContext context) {
     // Determine if the meal is recommended based on calorie content
@@ -233,7 +253,7 @@ class _Meal_Food_CardState extends State<Meal_Food_Card> {
                     Text(
                       widget.meal['strMeal'],
                       style: const TextStyle(
-                        fontSize: 14,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                       overflow: TextOverflow.ellipsis,
@@ -241,14 +261,14 @@ class _Meal_Food_CardState extends State<Meal_Food_Card> {
                     Text(
                       "Calories: ${widget.calories} kcal",
                       style: TextStyle(
-                        fontSize: 10,
+                        fontSize: 14,
                         color: isRecommended ? Colors.green : Colors.grey,
                       ),
                     ),
                     Text(
-                      "Category: ${widget.category}",
+                      "Meal Time: ${_getRandomMealTime()}",
                       style: const TextStyle(
-                        fontSize: 10,
+                        fontSize: 14,
                         color: Colors.grey,
                       ),
                     ),
